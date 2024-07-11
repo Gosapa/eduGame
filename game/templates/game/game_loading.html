@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block body %}
+<div>
+    <h1>Loading...</h1>
+</div>
+{% endblock body %}
+{% block script %}
+<script>
+    async function generate_questions() {
+        const endpointURL = "{% url 'game:generate_questions' game_id=game_id %}";
+        try {
+            const response = await fetch (endpointURL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-CSRFToken": "{{ csrf_token }}",
+                },
+                body: JSON.stringify({}),
+            });
+            if (response.ok) {
+                const data = await response.json();
+                console.log(data);
+            }else {
+                console.error("Error creating game", response.status);
+                console.log(response);
+            }
+        } catch (error) {
+            console.error("Error occured", error);
+        }
+    }
+    window.onload = async() => {
+        console.log("hello world");
+        await generate_questions();
+    }
+</script>
+{% endblock script %}
