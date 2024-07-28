@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block body %}
+<section id="intro" class="mt-8 flex flex-col items-center justify-center p-6 mb-12">
+    <h2 class="max-w-4xl text-4xl font-bold text-center text-slate-900">
+        AI Supported <span class="text-purple-600">Education</span> Advisor
+    </h2>
+    <p class="max-w-md text-2xl mt-4 text-center text-slate-700">Smart Problem Roulette that supports <span class="italic text-purple-600">ANY</span> subject. </p>
+    <p class="max-w-md text-lg mt-2 text-center text-slate-700">Boost your learning with personalized, AI-generated questions and track your progress with insightful statistics!</p>
+</section>
+
+<div class="flex justify-center space-x-8">
+    <a href="{% url 'game:list' %}" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-md shadow-md transition duration-300">
+        <h1 class="text-xl">Load Game</h1>
+    </a>
+    <a href="{% url 'game:start_game' %}" class="bg-green-500 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-md shadow-md transition duration-300">
+        <h1 class="text-xl">Start Game</h1>
+    </a>
+</div>
+
+{% endblock body %}

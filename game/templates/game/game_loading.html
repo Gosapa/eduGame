@@ -1,7 +1,8 @@
 {% extends 'base.html' %}
 {% block body %}
-<div>
-    <h1>Loading...</h1>
+<div id="loading" class="flex items-center justify-center min-h-screen">
+    <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-b-4 border-blue-500 opacity-75"></div>
+    <p class="ml-4 text-lg font-bold text-gray-800">Loading...</p>
 </div>
 {% endblock body %}
 {% block script %}
@@ -20,6 +21,7 @@
             if (response.ok) {
                 const data = await response.json();
                 console.log(data);
+                window.location.href = "{% url 'game:play_game' game_id=game_id %}"
             }else {
                 console.error("Error creating game", response.status);
                 console.log(response);
@@ -29,7 +31,6 @@
         }
     }
     window.onload = async() => {
-        console.log("hello world");
         await generate_questions();
     }
 </script>

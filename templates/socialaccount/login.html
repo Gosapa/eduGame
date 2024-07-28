@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load i18n %}
+{% load allauth%}
+{% block body %}
+<div class="text-center my-10">
+    {% if process != "connect" %}
+    <h1 class="text-4xl font-bold text-center text-slate-900">
+        {% blocktrans with provider.name as provider %}Sign In Via {{ provider }}{% endblocktrans %}
+    </h1>
+    <p class="text-2xl my-4 text-center text-slate-700">
+        {% blocktrans with provider.name as provider %}You are about to sign in using a third-party account from {{ provider }}.{% endblocktrans %}
+    </p>
+    {% endif %}
+    {% element form method="post" no_visible_fields=True %}
+        {% slot actions %}
+            {% csrf_token %}
+            {% element button type="submit" %}
+                {% trans "Continue" %}
+            {% endelement %}
+        {% endslot %}
+    {% endelement %}
+</div>
+{% endblock body %}

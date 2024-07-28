@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% load allauth i18n %}
+{% block body %}
+<div class="text-center my-10">
+    <h1 class="text-4xl font-bold text-left md:text-center text-slate-900">
+        {% trans "Sign Out" %}
+    </h1>
+    <p class="text-2xl my-4 text-left md:text-center text-slate-700">
+        {% trans 'Are you sure you want to sign out?' %}
+    </p>
+    {% url 'account_logout' as action_url %}
+    {% element form method="post" action=action_url no_visible_fields=True %}
+        {% slot body %}
+            {% csrf_token %}
+            {{ redirect_field }}
+        {% endslot %}
+        {% slot actions %}
+            {% element button type="submit" %}
+                {% trans 'Sign Out' %}
+            {% endelement %}
+        {% endslot %}
+    {% endelement %}
+</div>
+{% endblock body %}
