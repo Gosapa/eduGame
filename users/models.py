@@ -15,7 +15,7 @@ class Profile(models.Model):
     # add user
     user = models.OneToOneField(User, on_delete=models.CASCADE, default=1)
     games_completed = models.IntegerField(default=0)
-    subjects_completed = models.JSONField(default=dict)
+    subjects_completed = models.JSONField(default=dict, null=True)
     
     def __str__(self):
         return self.user.username

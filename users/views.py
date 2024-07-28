@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
+from allauth.socialaccount.models import SocialAccount
 from gemini.functions import gemini_generate_achievement
 from .models import Achievement, Profile
 import json
@@ -11,6 +12,7 @@ import json
 @login_required
 def profile(request):
     profile = Profile.objects.get(user=request.user)
+
     achievements = Achievement.objects.filter(user=request.user)
     return render(request, 'users/profile.html', {'profile': profile, 'achievements': achievements})
 
