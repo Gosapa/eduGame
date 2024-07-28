@@ -1,0 +1,95 @@
+{% extends 'base.html' %}
+{% block body %}
+<div class="container mx-auto flex flex-col items-center justify-center min-h-screen p-4">
+    <h1 class="text-3xl font-bold text-gray-800 mb-4">Friend Requests</h1>
+
+    <div class="w-full md:w-1/2">
+        {% if friendrequests %}
+
+        <ul class="bg-white rounded-md shadow-md divide-y divide-gray-200">
+            {% for friendrequest in friendrequests %}
+                <li class="px-6 py-4 flex items-center justify-between" id="request-{{ friendrequest.id }}"> 
+                    <div class="flex items-center">
+                        <!-- Add a profile picture placeholder here if you have one -->
+                        <div class="ml-4">
+                            <p class="text-lg font-medium text-gray-800">
+                                From: {{ friendrequest.from_user.username }}
+                            </p>
+                            <!-- Add other details about the request if needed -->
+                        </div>
+                    </div>
+                    <div class="space-x-2">
+                        <button class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" 
+                                onclick="acceptFriendRequest({{ friendrequest.id }})">
+                            Accept
+                        </button>
+                        <button class="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" 
+                                onclick="rejectFriendRequest({{ friendrequest.id }})">
+                            Reject
+                        </button>
+                    </div>
+                </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <div class="bg-white rounded-md shadow-md p-6 text-center">
+            <p class="text-gray-700">You don't have any friend requests currently.</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock body %}
+
+{% block script %}
+<script>
+    async function acceptFriendRequest(requestID) {
+        if (confirm("Are you sure you want to accept this friend request?")) {
+            const endpointURL = `{% url 'users:accept_friend_request' requestID=99999 %}`.replace('99999', requestID);
+
+            try {
+                const response = await fetch(endpointURL, {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}",
+                    },
+                });
+
+                if (response.ok) {
+                    const li = document.getElementById(`request-${requestID}`); 
+                    li.remove();
+                    alert("Friend request accepted."); 
+                } else {
+                    alert("Error accepting friend request.");
+                }
+            } catch (error) {
+                alert("An error occurred.");
+            }
+        }
+    }
+
+    async function rejectFriendRequest(requestID) {
+        if (confirm("Are you sure you want to reject this friend request?")) {
+            const endpointURL = `{% url 'users:reject_friend_request' requestID=99999 %}`.replace('99999', requestID);
+
+            try {
+                const response = await fetch(endpointURL, {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}",
+                    },
+                });
+
+                if (response.ok) {
+                    const li = document.getElementById(`request-${requestID}`); 
+                    li.remove(); // Remove the list item from the page
+                    alert("Friend request rejected.");
+                } else {
+                    alert("Error rejecting friend request.");
+                }
+            } catch (error) {
+                alert("An error occurred.");
+            }
+        }
+    }
+</script>
+{% endblock script %}

@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% block body %}
+<div class="container mx-auto flex flex-col items-center justify-center min-h-screen p-4">
+    <h1 class="text-3xl font-bold text-gray-800 mb-4">Your Friends</h1>
+
+    <div class="w-full md:w-1/2">
+        {% if friends %}
+            <ul class="bg-white rounded-md shadow-md divide-y divide-gray-200">
+                {% for friend in friends %}
+                    <li class="px-6 py-4 flex items-center justify-between" id="friend-{{ friend.id }}"> 
+                        <div class="flex items-center">
+                            <img src="{{ friend.socialaccount_set.all.0.extra_data.picture }}" class="rounded-full w-8 h-8" alt="Profile Picture">
+                            <div class="ml-4">
+                                <a href="{% url 'users:profile' user_id=friend.id%}">
+                                    <p class="text-lg font-medium text-gray-800">{{ friend.first_name }} {{ friend.last_name }}</p>
+                                </a>
+                            </div>
+                        </div>
+                        <button class="bg-red-500 hover:bg-red-700 text-white text-sm py-1 px-3 rounded focus:outline-none focus:shadow-outline" 
+                                onclick="removeFriend({{ friend.id }})">
+                            Remove
+                        </button>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <div class="bg-white rounded-md shadow-md p-6 text-center">
+                <p class="text-gray-700">You don't have any friends currently.</p>
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="mt-8 w-full md:w-1/2">
+        <h2 class="text-xl font-bold text-gray-800 mb-2">Send Friend Request</h2>
+        <div class="flex">
+            <input type="number" id="user_id_input" class="border rounded-md py-2 px-3 mr-2 w-full" placeholder="Enter User ID">
+            <button id="send_request_btn" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-md focus:outline-none focus:shadow-outline">
+                Send Request
+            </button>
+        </div>
+        <div id="request_message" class="text-gray-700 mt-2"></div>
+    </div>
+
+    <div class="mt-4 w-full md:w-1/2 text-center"> 
+        <a href="{% url 'users:received_friend_request' %}" class="text-blue-500 hover:underline">
+            View Received Friend Requests
+        </a>
+    </div>
+</div>
+{% endblock body %}
+
+{% block script %}
+<script>
+    const sendRequestBtn = document.getElementById('send_request_btn');
+    const userIdInput = document.getElementById('user_id_input');
+    const requestMessage = document.getElementById('request_message');
+
+    sendRequestBtn.addEventListener('click', async () => {
+        const userId = userIdInput.value;
+        if (userId === "") {
+            requestMessage.textContent = "Please enter a User ID.";
+            return;
+        }
+
+        const endpointURL = `{% url 'users:friend_request' user_id=99999 %}`.replace('99999', userId);
+
+        try {
+            const response = await fetch(endpointURL, {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                },
+            });
+
+            if (response.ok) {
+                requestMessage.textContent = await response.text(); // Display the response message
+            } else {
+                requestMessage.textContent = "Error sending friend request.";
+            }
+        } catch (error) {
+            requestMessage.textContent = "An error occurred.";
+        }
+    });
+    async function removeFriend(friendID) {
+        if (confirm("Are you sure you want to remove this friend?")) {
+            const endpointURL = `{% url 'users:remove_friend' friendID=99999 %}`.replace('99999', friendID); 
+
+            try {
+                const response = await fetch(endpointURL, {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": "{{ csrf_token }}",
+                    },
+                });
+
+                if (response.ok) {
+                    // Remove the friend's list item from the page
+                    const li = document.getElementById(`friend-${friendID}`); 
+                    li.remove(); 
+                    alert("Friend removed successfully!"); 
+                } else {
+                    alert("Error removing friend.");
+                }
+            } catch (error) {
+                alert("An error occurred.");
+            }
+        }
+    }
+</script>
+{% endblock script %}

@@ -150,5 +150,7 @@ SOCIALACCOUNT_PROVIDERS = {
     }
 }
 
+AUTH_USER_MODEL = 'users.User'
+
 LOGIN_REDIRECT_URL = '/'
 LOGIN_URL = '/accounts/google/login/'

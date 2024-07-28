@@ -1,7 +1,8 @@
 import json
 from users.models import Profile, Achievement
 from game.models import Game
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
+User = get_user_model()
 
 def prompt_generate_questions(subject, details):
     return f"""Please create 10 multiple choice questions about {subject}, on {details}
